@@ -565,7 +565,7 @@ def rinex_sopac(station, year, month, day):
     picks up a hatanaka RINEX file from SOPAC - converts to o
     hatanaka exe hardwired  for my machine
     """
-    exedir = os.environ['EXE']
+    #exedir = os.environ['EXE']
     crnxpath = hatanaka_version()
     doy,cdoy,cyyyy,cyy = ymd2doy(year,month,day)
     sopac = 'ftp://garner.ucsd.edu'
@@ -627,7 +627,7 @@ def rinex_cddis(station, year, month, day):
     if day is zero, then month is assumed to be doy
     
     """
-    exedir = os.environ['EXE'] # do not need this?
+    #exedir = os.environ['EXE'] # do not need this?
     crnxpath = hatanaka_version()
     if (day == 0):
         doy = month
@@ -727,8 +727,10 @@ def rinex_nrcan(station, year, month, day):
     Note: this code does not work - let me know if you have a way
     to access NRCAN anonymously
     """
-    exedir = os.environ['EXE']
-    crnxpath = exedir + '/CRX2RNX'
+    #exedir = os.environ['EXE']
+    #crnxpath = exedir + '/CRX2RNX'
+    crnxpath = hatanaka_version()
+
     # if doy is input 
     if day == 0:
         doy=month
@@ -2491,7 +2493,7 @@ def quick_rinex_snr(year, doy, station, option, orbtype,receiverrate,dec_rate):
     20apr15, xz compression added
     """
     # define directory for the conversion executables
-    exedir = os.environ['EXE']
+    #exedir = os.environ['EXE']
     # FIRST, check to see if the SNR file already exists
 #    snrname_full,snrname_compressed = define_filename(station,year,doy,option)
     snrname_full, snrname_compressed, snre = define_and_xz_snr(station,year,doy,option)
@@ -2557,7 +2559,8 @@ def quick_rinex_snr(year, doy, station, option, orbtype,receiverrate,dec_rate):
                 try:
                     print('decimate using teqc ', dec_rate, ' seconds')
                     print('testing subprocess while decimating')
-                    exc = exedir + '/teqc' 
+                    exc = teqc_version()
+                    # exc = exedir + '/teqc' 
                     rinexout = rinexfile + '.tmp'; cdec = str(dec_rate)
                     fout = open(rinexout,'w')
                     subprocess.call([exc, '-O.dec', cdec, rinexfile],stdout=fout)
@@ -2712,8 +2715,9 @@ def rinex_unavco_highrate(station, year, month, day):
 
     WARNING: only rinex version 2 in this world
     """
-    exedir = os.environ['EXE']
-    crnxpath = exedir + '/CRX2RNX'
+    #exedir = os.environ['EXE']
+    #crnxpath = exedir + '/CRX2RNX'
+    crnxpath = hatanaka_version()
     doy,cdoy,cyyyy,cyy = ymd2doy(year,month,day)
     rinexfile,rinexfiled = rinex_name(station, year, month, day)
     unavco= 'ftp://data-out.unavco.org'
@@ -2747,10 +2751,17 @@ def big_Disk_in_DC(station, year, month, day):
     picks up a RINEX file from CORS.  
     changed it to pick up gzip o file instead of d file.  Not sure why they have 
     both but the d file appears to be 30 sec, and that I do not want
+    allow doy to be sent to code in the month spot.  set day to zero
     """
-    exedir = os.environ['EXE']
-    crnxpath = exedir + '/CRX2RNX'
-    doy,cdoy,cyyyy,cyy = ymd2doy(year,month,day)
+    #exedir = os.environ['EXE']
+    #crnxpath = exedir + '/CRX2RNX'
+    crnxpath = hatanaka_version()
+    if day == 0:
+        doy = month
+        year, month, day, cyyyy,cdoy, YMD = ydoy2useful(year,doy)
+        cyy = cyyyy[2:4]
+    else:
+        doy,cdoy,cyyyy,cyy = ymd2doy(year,month,day)
     rinexfile,rinexfiled = rinex_name(station, year, month, day)
     comp_rinexfiled = rinexfiled + '.Z'
     gzip_rinexfile = rinexfile + '.gz'
@@ -3368,26 +3379,32 @@ def rinex_ga_lowrate(station,year,month,day):
     only Rinex 2.11 for now
     kristine larson
     20jul10: change from year doy to year month day, because that is what the others are
+    20sep02: change ftp site and Z to gz (per IGS mail from Ryan Ruddick)
+    20sep02: allow year, doy input by setting day to zero (send doy in month slot)
     """
     fexists = False
-    exedir = os.environ['EXE']
-    crnxpath = exedir + '/CRX2RNX'
+    #exedir = os.environ['EXE']
+    #crnxpath = exedir + '/CRX2RNX'
+    crnxpath = hatanaka_version()
+
     if day == 0:
         doy=month
         d = doy2ymd(year,doy);
         month = d.month; day = d.day
     doy,cdoy,cyyyy,cyy = ymd2doy(year,month,day)
-    ftpg = 'ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/' + cyyyy + '/' + cyy + cdoy  + '/'
-    dnameZ = station + cdoy + '0.' + cyy + 'd.Z' 
+    # changed september 2, 2020
+    #ftpg = 'ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/daily/' + cyyyy + '/' + cyy + cdoy  + '/'
+    #dnameZ = station + cdoy + '0.' + cyy + 'd.Z' 
+    ftpg = 'ftp://ftp.data.gnss.ga.gov.au/daily/' + cyyyy + '/' + cdoy  + '/'
+    dnameZ = station + cdoy + '0.' + cyy + 'd.gz' 
     dname = station + cdoy + '0.' + cyy + 'd'
     rname = station + cdoy + '0.' + cyy + 'o'
-    url = ftpg + dname + '.Z'
+    url = ftpg + dnameZ
     print(url)
-    #print(dname,rname)
     try:
         wget.download(url,dnameZ)
         if os.path.isfile(dnameZ):
-            status = subprocess.call(['uncompress', dnameZ])
+            status = subprocess.call(['gunzip', dnameZ])
             status = subprocess.call([crnxpath, dname])
             status = subprocess.call(['rm', '-f', dname])
     except:
@@ -3406,10 +3423,13 @@ def rinex_ga_highrate(station, year, month, day):
     picks up a higrate RINEX file from Geoscience Australia
     you can input day =0 and it will assume month is day of year
     not sure if it merges them ...
+    2020 September 2 - moved to gz and new ftp site
     """
-    exedir = os.environ['EXE']
-    crnxpath = exedir + '/CRX2RNX'
-    teqcpath = exedir + '/teqc'
+    #exedir = os.environ['EXE']
+    #crnxpath = exedir + '/CRX2RNX'
+    #teqcpath = exedir + '/teqc'
+    crnxpath = hatanaka_version()
+    teqcpath = teqc_version()
     alpha='abcdefghijklmnopqrstuvwxyz'
     # if doy is input
     if day == 0:
@@ -3417,24 +3437,28 @@ def rinex_ga_highrate(station, year, month, day):
         d = doy2ymd(year,doy);
         month = d.month; day = d.day
     doy,cdoy,cyyyy,cyy = ymd2doy(year,month,day)
-    gns = 'ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/highrate/' + cyyyy + '/' + cyy + cdoy 
+    #gns = 'ftp://ftp.ga.gov.au/geodesy-outgoing/gnss/data/highrate/' + cyyyy + '/' + cyy + cdoy 
+    gns = 'ftp://ftp.data.gnss.ga.gov.au/highrate/' + cyyyy + '/' + cdoy + '/'
     for h in range(0,24):
         # subdirectory
         ch = '{:02d}'.format(h)
         for e in ['00', '15', '30', '45']:
-            dname = station + cdoy + alpha[h] + e + '.' + cyy + 'd.Z'
+            dname = station + cdoy + alpha[h] + e + '.' + cyy + 'd.gz'
             dname1 = station + cdoy + alpha[h] + e + '.' + cyy + 'd'
             dname2 = station + cdoy + alpha[h] + e + '.' + cyy + 'o'
             url = gns + '/' + ch + '/' + dname
             print(url)
             try:
                 wget.download(url,dname)
-                subprocess.call(['uncompress',dname])
+                subprocess.call(['gunzip',dname])
                 subprocess.call([crnxpath, dname1])
                 subprocess.call([teqcpath])
+                # delete the d file
+                subprocess.call(['rm',dname1])
             except:
-                print('did not work')
+                print('download failed for some reason')
 
+    print('a nice person would merge them for you ... ')
 
 def highrate_nz(station, year, month, day):
     """
@@ -3452,7 +3476,8 @@ def highrate_nz(station, year, month, day):
     cdd  = '{:02d}'.format(day)
     exedir = os.environ['EXE']
     trimbleexe = exedir + '/runpkr00' 
-    teqc = exedir + '/teqc' 
+    #teqc = exedir + '/teqc' 
+    teqc = teqc_version()
     for h in range(0,24):
         # subdirectory
         chh = '{:02d}'.format(h)
@@ -4243,9 +4268,16 @@ def big_Disk_work_hard(station,year,month,day):
     """
     since the NGS deletes files and leaves you with crap 30 sec files
     you need to download the hourly and make your own, apparently?
+    if day is set to zero, we assume the month is day of year
 
     """
-    doy,cdoy,cyyyy,cyy = ymd2doy(year,month,day)
+    if (day == 0):
+        doy = month
+        year, month, day, cyyyy,cdoy, YMD = ydoy2useful(year,doy)
+        cyy = cyyyy[2:4]
+    else:
+        doy,cdoy,cyyyy,cyy = ymd2doy(year,month,day)
+
     # want to merge the hourly files into this filename
     rinexfile =  station + cdoy + '0.' + cyy + 'o'
     exc = teqc_version()
