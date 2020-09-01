@@ -10,8 +10,8 @@ import sys
 import subprocess
 from scipy.interpolate import interp1d
  
-import rinpy
-import gps as g
+import gnssrefl0.rinpy
+import gnssrefl0.gps as g
 
 class constants:
     omegaEarth = 7.2921151467E-5 #      %rad/sec

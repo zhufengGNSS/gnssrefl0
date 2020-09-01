@@ -19,7 +19,7 @@ import numpy as np
 import wget
 
 # my code
-import read_snr_files as snr
+import gnssrefl0.read_snr_files as snr
 
 # various numbers you need in the GNSS world
 # mostly frequencies and wavelengths
@@ -984,7 +984,7 @@ def getsp3file_mgex(year,month,day,pCtr):
 #https://cddis.nasa.gov/Data_and_Derived_Products/GNSS/gnss_mgex_products.html
 # CDDIS claims the old way stopped at GPS week 1945
 
-        if (igps_week < 1944):
+        if (igps_week < 2050):
             try:
             # secure filename # 1??
                 cddis_download(secure_file, secure_dir)
@@ -994,7 +994,7 @@ def getsp3file_mgex(year,month,day,pCtr):
             except:
                 print('did not find', file1)
         else:
-            print('will only use the long orbit name for weeks after 1944')
+            print('will only use the long orbit name for weeks after 2000')
         if not foundit:
             name = file2[:-3]
             # new secure filename 

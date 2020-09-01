@@ -6,8 +6,6 @@ import datetime
 import json
 import numpy as np
 import matplotlib.pyplot as plt
-#import warnings.filterwarnings("ignore")
-#import cProfile
 import os
 import scipy.interpolate
 import scipy.signal
@@ -15,13 +13,10 @@ import subprocess
 import sys
 import warnings
 
-import gps as g
-import read_snr_files as snr
-import gnssir_guts as guts
-
-# my internal codes for the refraction correction, which are based on
-# codes from TU Vienna
-import refraction as refr
+import gnssrefl0.gps as g
+import gnssrefl0.read_snr_files as snr
+import gnssrefl0.gnssir_guts as guts
+import gnssrefl0.refraction as refr
 
 
 

@@ -9,13 +9,15 @@ import subprocess
 import sys
 import warnings
 
-import gps as g
-import read_snr_files as snr
-import refraction as refr
+import gnssrefl0.gps as g
+import gnssrefl0.read_snr_files as snr
+import gnssrefl0.refraction as refr
 
 def gnssir_guts(station,year,doy, snr_type, extension,lsp):
     """
     my attempt to separate the inputs to the code and the guts of the code
+    inputs are station name, year, day of year (integers)
+    snr_type is an integer (99, 66, etc). lsp is a json
     """
 
     e1=lsp['e1']; e2=lsp['e2']; minH = lsp['minH']; maxH = lsp['maxH']

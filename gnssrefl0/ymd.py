@@ -5,7 +5,7 @@ kristine larson
 Updated: April 3, 2019
 """
 import argparse
-import gps as g
+import gnssrefl0.gps as g
 
 def main():
 

@@ -15,9 +15,9 @@ import scipy.signal
 
 
 # my codes
-import gps as g
-import read_snr_files as snr
-import quickLook_function as quick
+import gnssrefl0.gps as g
+import gnssrefl0.read_snr_files as snr
+import gnssrefl0.quickLook_function as quick
 
 
 def main():

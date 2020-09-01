@@ -2,14 +2,14 @@ import sys
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 
 import scipy.interpolate
 import scipy.signal
-from matplotlib.figure import Figure
 
-import gps as g
-import quick_read_snr as q
-import rnx2snr as rnx
+import gnssrefl0.gps as g
+import gnssrefl0.quick_read_snr as q
+import gnssrefl0.rnx2snr as rnx
 
 
 def quickLook_function(station, year, doy, snr_type,f,e1,e2,minH,maxH,reqAmp,pele,satsel,PkNoise,fortran):

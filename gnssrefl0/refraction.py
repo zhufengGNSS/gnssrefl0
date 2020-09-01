@@ -11,7 +11,7 @@ import sys
 import numpy as np
 from scipy.interpolate import interp1d
 
-import gps as g
+import gnssrefl0.gps as g
 
 def read_4by5(station, dlat,dlon,hell):
     """
