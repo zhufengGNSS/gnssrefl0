@@ -22,7 +22,7 @@ setup(
     packages=['gnssrefl0'],
     entry_points ={
         'console_scripts': [
-            'gnssrefl0 = gnssrefl0.gnssir:main',
+            'gnssir= gnssrefl0.gnssir:main',
             'rinex2snr = gnssrefl0.rinex2snr:main',
             'ymd = gnssrefl0.ymd:main',
             'quickLook = gnssrefl0.quickLook:main',
