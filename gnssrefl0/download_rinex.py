@@ -17,8 +17,10 @@ def main():
 # optional arguments
     parser.add_argument("-rate", default=None, metavar='low',type=str, help="sample rate: low or high")
     parser.add_argument("-archive", default=None, metavar='all',help="archive (unavco,sopac,cddis,sonel,nz,ga,ngs)", type=str)
+    parser.add_argument("-version", default=None, metavar=2,type=int, help="rinex version (2 or 3)")
 
     args = parser.parse_args()
+    station = args.station
     year = args.year
     month = args.month
     day = args.day
@@ -26,20 +28,19 @@ def main():
     if (day == 0):
         # then you are using day of year as input
         year,month,day=g.ydoy2ymd(year, month) 
-        doy,cdoy,cyyyy,cyy = g.ymd2doy(year, month, day)
-    else:
-        doy,cdoy,cyyyy,cyy = g.ymd2doy(year, month, day )
-            if args.rate == None:
+
+    if args.rate == None:
         rate = 'low'
     else:
         rate = 'high'
 
-    if args.doy_end == None:
-        doy2 = doy1
-    else:
-        doy2 = args.doy_end
-
     archive_list = ['sopac', 'unavco','sonel','cddis','nz','ga','bkg','jeff','ngs']
+
+    if args.version == None:
+        version = 2
+    else:
+        version = 3
+    
     if args.archive == None:
         archive = 'all'
     else:
@@ -50,6 +51,16 @@ def main():
             print('For future reference: I allow these archives:')
             print(archive_list)
             archive = 'all'
+
+
+    if version == 3:
+        srate = 30 # rate supported by CDDIS
+        orbtype = 'nav'
+        rinex2exists, rinex3name = g.cddis3(station, year, doy,srate)
+        if not rinex2exists:
+            # try again - unavco has 15 sec I believe
+            srate = 15
+            rinex2exists, rinex3name = g.unavco3(station9ch, year, doy,srate)
 
     g.go_get_rinex_flex(station,year,month,day,rate,archive)
 if __name__ == "__main__":

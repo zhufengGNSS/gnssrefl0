@@ -3790,9 +3790,7 @@ def cddis_rinex3(station9ch, year, doy,srate,orbtype):
     returns file existence boolean and name of the RINEX 3 file (so it can be cleaned up)
     author: kristine larson
     """
-#    https://cddis.nasa.gov/Data_and_Derived_Products/GNSS/RINEX_Version_3.html
     fexists = False 
-    print(orbtype)
     ftp = 'ftp://cddis.nasa.gov/gnss/data/daily/'
     cdoy = '{:03d}'.format(doy)
     cyy = '{:02d}'.format(year-2000)
@@ -3810,7 +3808,7 @@ def cddis_rinex3(station9ch, year, doy,srate,orbtype):
     url = ftp + f + gzfilename  
     print(url)
     # not sure i still neeed this
-    exedir = os.environ['EXE']
+    #exedir = os.environ['EXE']
     gexe = gfz_version()
     crnxpath = hatanaka_version()
     if orbtype == 'nav':
@@ -3827,14 +3825,9 @@ def cddis_rinex3(station9ch, year, doy,srate,orbtype):
         print(gzfilename)
         print(new_way_f)
         try:
-            #wget.download(url,gzfilename)
-            # using new protocol
             cddis_download(gzfilename,new_way_f)
-            #wget.download(url,gzfilename)
-            # unzip and Hatanaka decompress
             subprocess.call(['gunzip',gzfilename])
             subprocess.call([crnxpath,filename])
-            # remove the crx file
             subprocess.call(['rm',filename])
         except:
             print('no file at CDDIS')
@@ -4050,7 +4043,7 @@ def unavco_rinex3(station9ch, year, doy,srate,orbtype):
             # remove the crx file
             subprocess.call(['rm',filename])
         except:
-            print('no file at CDDIS')
+            print('no file at unavco')
 
     if os.path.isfile(rfilename) and os.path.isfile(gexe):
         print('making rinex 2.11')
@@ -4324,3 +4317,67 @@ def big_Disk_in_DC_hourly(station, year, month, day,idtag):
         status = subprocess.call(['gunzip', crinexfile])
     except:
         print('some problem in download - maybe the site does not exist on this archive')
+
+
+def cddis3(station9ch, year, doy,srate):
+    """
+    author: kristine larson
+    just gets RINEX - does not translate it to anything else
+    """
+    fexists = False
+    ftp = 'ftp://cddis.nasa.gov/gnss/data/daily/'
+    cdoy = '{:03d}'.format(doy)
+    cyy = '{:02d}'.format(year-2000)
+    cyyyy = str(year)
+
+    f = cyyyy + '/' + cdoy + '/' + cyy + 'd'  + '/'
+    new_way_f = '/gnss/data/daily/' + f
+    ff = station9ch.upper() +   '_R_' + cyyyy + cdoy + '0000_01D_' + str(srate) + 'S_MO'
+    smallff = station9ch[0:4].lower() + cdoy + '0.' + cyy + 'o'
+    ending = '.crx' # compressed rinex3 ending
+    rending = '.rnx' # rinex3 ending
+    gzfilename = ff+ending + '.gz' # the crx.gz file
+    filename = ff+ending  # the crx file
+    rfilename = ff+rending # the rnx file
+    url = ftp + f + gzfilename
+    print(url)
+    crnxpath = hatanaka_version()
+    try:
+        cddis_download(gzfilename,new_way_f)
+        subprocess.call(['gunzip',gzfilename])
+        subprocess.call([crnxpath,filename])
+        subprocess.call(['rm',filename])
+    except:
+        print('no rinex3 file at CDDIS')
+
+
+def unavco3(station9ch, year, doy,srate):
+    """
+    just gets rinex 3 file from unavco
+    """
+    fexists = False
+    cdoy = '{:03d}'.format(doy)
+    cyy = '{:02d}'.format(year-2000)
+    csrate = '{:02d}'.format(srate)
+    cyyyy = str(year)
+    ftp = 'ftp://data-out.unavco.org/pub/rinex3/obs/'
+
+    f = cyyyy + '/' + cdoy + '/'
+    ff = station9ch.upper() +   '_R_' + cyyyy + cdoy + '0000_01D_' + csrate + 'S_MO'
+    smallff = station9ch[0:4].lower() + cdoy + '0.' + cyy + 'o'
+    ending = '.crx' # compressed rinex3 ending
+    rending = '.rnx' # rinex3 ending
+    gzfilename = ff+ending + '.gz' # the crx.gz file
+    filename = ff+ending  # the crx file
+    rfilename = ff+rending # the rnx file
+    url = ftp + f + gzfilename
+    print(url)
+    crnxpath = hatanaka_version()
+    try:
+        wget.download(url,gzfilename)
+        subprocess.call(['gunzip',gzfilename])
+        subprocess.call([crnxpath,filename])
+        subprocess.call(['rm',filename])
+     except:
+         print('no rinex3 file at unavco')
+
