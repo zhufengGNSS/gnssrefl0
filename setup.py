@@ -19,7 +19,7 @@ setup(
     long_description=readme,
     long_description_content_type="text/markdown",
     url="https://github.com/kristinemlarson/gnssrefl0/",
-    packages=['gnssrefl0'],
+    packages=find_packages(),
     entry_points ={
         'console_scripts': [
             'gnssir= gnssrefl0.gnssir:main',
