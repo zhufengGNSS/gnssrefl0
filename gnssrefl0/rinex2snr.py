@@ -21,8 +21,10 @@ import subprocess
 
 import numpy as np
 
-import gnssrefl0.gps as g
-import gnssrefl0.rnx2snr as rnx
+import gps as g
+import rnx2snr as rnx
+#import gnssrefl0.gps as g
+#import gnssrefl0.rnx2snr as rnx
  
 def main():
 #

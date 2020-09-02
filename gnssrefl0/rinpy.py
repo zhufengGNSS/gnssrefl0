@@ -3,7 +3,7 @@ import re
 import datetime
 import struct
 
-import gnssrefl0.gps as g
+import gps as g
 
 # Joakim Strandberg wrote this code originally-
 # I made some small changes ???  Kristine M. Larson
