@@ -19,10 +19,10 @@ setup(
     long_description=readme,
     long_description_content_type="text/markdown",
     url="https://github.com/kristinemlarson/gnssrefl0/",
-    packages=find_packages(),
+    packages=['gnssrefl0'],
     entry_points ={
         'console_scripts': [
-            'gnssrefl0 = gnssrefl0.gnssrefl0:main',
+            'gnssrefl0 = gnssrefl0.gnssir:main',
             'rinex2snr = gnssrefl0.rinex2snr:main',
             'ymd = gnssrefl0.ymd:main',
             'quickLook = gnssrefl0.quickLook:main',

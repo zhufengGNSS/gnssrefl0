@@ -19,8 +19,8 @@ import numpy as np
 import wget
 
 # my code
-import read_snr_files as snr
-#import gnssrefl0.read_snr_files as snr
+#from gnssrefl0 import read_snr_files as snr
+import gnssrefl0.read_snr_files as snr
 
 # various numbers you need in the GNSS world
 # mostly frequencies and wavelengths

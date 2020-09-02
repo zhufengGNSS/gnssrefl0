@@ -6,6 +6,7 @@ Updated: April 3, 2019
 """
 import argparse
 import gnssrefl0.gps as g
+#from gnssrefl0 import gps as g
 
 def main():
 

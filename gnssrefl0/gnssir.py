@@ -13,7 +13,7 @@ import subprocess
 import sys
 import warnings
 
-from gnssrefl0 import gnssir_guts as guts
+import gnssrefl0.gnssir_guts as guts
 # do i need these? i don't think so
 #import gnssrefl0.refraction as refr
 #from gnssrefl0 import gps as g
