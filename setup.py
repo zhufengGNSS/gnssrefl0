@@ -12,12 +12,11 @@ requirements = ["numpy","wget","scipy","matplotlib","requests"]
 
 setup(
     name="gnssrefl0",
-    version="0.0.2",
+    version="0.0.3",
     author="Kristine M. Larson",
     author_email="kristinem.larson@gmail.com",
     description="GNSS Reflections package",
     long_description=readme,
-    long_description_content_type="text/markdown",
     url="https://github.com/kristinemlarson/gnssrefl0/",
     packages=find_packages(),
     entry_points ={
