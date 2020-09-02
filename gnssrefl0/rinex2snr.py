@@ -21,8 +21,6 @@ import subprocess
 
 import numpy as np
 
-#from gnssrefl0 import gps as g
-#from gnssrefl0 import rnx2snr as rnx
 import gnssrefl0.gps as g
 import gnssrefl0.rnx2snr as rnx
  
@@ -49,10 +47,10 @@ def main():
 #
     station = args.station; NS = len(station)
     if (NS == 4):
-        print('assume RINEX 2.11'); version = 2
+        print('Assume RINEX 2.11'); version = 2
         station = station.lower()
     elif (NS == 9):
-        print('assume RINEX 3'); version = 3
+        print('Assume RINEX 3'); version = 3
         station9ch = station.upper()
         station = station[0:4].lower()
     else:

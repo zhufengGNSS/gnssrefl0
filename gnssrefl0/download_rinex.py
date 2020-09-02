@@ -56,8 +56,8 @@ def main():
             archive = 'all'
 
 
+    NS = len(station)
     if version == 3:
-        NS = len(station)
         if NS == 9:
             srate = 30 # rate supported by CDDIS
             fexist = g.cddis3(station, year, doy,srate)
@@ -65,10 +65,14 @@ def main():
                 # try again - unavco has 15 sec I believe
                 srate = 15
                 fexist = g.unavco3(station, year, doy,srate)
+            if fexist:
+                print('RINEX DOWNLOAD SUCCESSFUL')
         else:
             print('exiting: station names must have 9 characters')
     else:
-        print('version 2')
-        g.go_get_rinex_flex(station,year,month,day,rate,archive)
+        if NS == 4:
+            g.go_get_rinex_flex(station,year,month,day,rate,archive)
+        else:
+            print('exiting: station names must have 4 characters, lowercase please')
 if __name__ == "__main__":
     main()
