@@ -64,7 +64,7 @@ def main():
             if not fexist:
                 # try again - unavco has 15 sec I believe
                 srate = 15
-                fexist = g.unavco3(station9ch, year, doy,srate)
+                fexist = g.unavco3(station, year, doy,srate)
         else:
             print('exiting: station names must have 9 characters')
     else:
