@@ -42,7 +42,7 @@ def main():
     if args.version == None:
         version = 2
     else:
-        version = 3
+        version = args.version
     
     if args.archive == None:
         archive = 'all'
