@@ -27,7 +27,10 @@ def main():
 
     if (day == 0):
         # then you are using day of year as input
-        year,month,day=g.ydoy2ymd(year, month) 
+        doy = month
+        year,month,day=g.ydoy2ymd(year, doy) 
+    else:
+        doy,cdoy,cyyyy,cyy = g.ymd2doy(year,month,day)
 
     if args.rate == None:
         rate = 'low'
