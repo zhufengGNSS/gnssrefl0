@@ -4350,6 +4350,10 @@ def cddis3(station9ch, year, doy,srate):
     except:
         print('no rinex3 file at CDDIS')
 
+    if os.path.isfile(rfilename):
+        fexists = True
+
+    return fexists 
 
 def unavco3(station9ch, year, doy,srate):
     """
@@ -4378,6 +4382,10 @@ def unavco3(station9ch, year, doy,srate):
         subprocess.call(['gunzip',gzfilename])
         subprocess.call([crnxpath,filename])
         subprocess.call(['rm',filename])
-     except:
-         print('no rinex3 file at unavco')
+    except:
+        print('no rinex3 file at unavco')
 
+    if os.path.isfile(rfilename):
+        fexists = True
+
+    return fexists

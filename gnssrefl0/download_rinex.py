@@ -57,14 +57,18 @@ def main():
 
 
     if version == 3:
-        srate = 30 # rate supported by CDDIS
-        orbtype = 'nav'
-        rinex2exists, rinex3name = g.cddis3(station, year, doy,srate)
-        if not rinex2exists:
-            # try again - unavco has 15 sec I believe
-            srate = 15
-            rinex2exists, rinex3name = g.unavco3(station9ch, year, doy,srate)
-
-    g.go_get_rinex_flex(station,year,month,day,rate,archive)
+        NS = len(station)
+        if NS == 9:
+            srate = 30 # rate supported by CDDIS
+            fexist = g.cddis3(station, year, doy,srate)
+            if not fexist:
+                # try again - unavco has 15 sec I believe
+                srate = 15
+                fexist = g.unavco3(station9ch, year, doy,srate)
+        else:
+            print('exiting: station names must have 9 characters')
+    else:
+        print('version 2')
+        g.go_get_rinex_flex(station,year,month,day,rate,archive)
 if __name__ == "__main__":
     main()
