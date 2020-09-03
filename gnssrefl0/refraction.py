@@ -250,6 +250,11 @@ def readWrite_gpt2_1w(xdir, station, site_lat, site_lon):
     lat and lon in degrees (NOT RADIANS)
     kristine m. larson
     """
+    PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+    BASE_DIR = os.path.dirname(PROJECT_ROOT)
+    print(PROJECT_ROOT)
+    print(BASE_DIR)
+
     # check that output path exists.  
     outpath = xdir + '/input/'
     if not os.path.isdir(outpath): 
