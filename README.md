@@ -26,7 +26,7 @@ with the details associated with **gnssir**.
 
 # Environment Variables 
 
-You need to define (at least) three environment variables:
+You should define (at least) three environment variables:
 
 * EXE = where various RINEX executables will live.
 
@@ -35,13 +35,16 @@ You need to define (at least) three environment variables:
 * REFL_CODE = where the reflection code inputs (SNR files and instructions) and outputs (RH)
 will be stored (see below)
 
+I have set this so that if you do not define these environment variables, it uses the local
+directory to store files. For orbits, inputs, and outputs, those are defined starting with the year.
+
 # Python
 See the requirements.txt file
 
 # Non-Python
 All executables must be stored in the EXE directory
 
-* Required translator CRX2RNX, http://terras.gsi.go.jp/ja/crx2rnx.html
+* **Required translator CRX2RNX**, http://terras.gsi.go.jp/ja/crx2rnx.html
 
 * Optional Fortran RINEX Translator for GPS, the executable must be called gpsSNR.e, https://github.com/kristinemlarson/gpsonlySNR
 

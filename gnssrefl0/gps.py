@@ -3517,7 +3517,7 @@ def llh2xyz(lat,lon,height):
     z= (r_n*(1 - NAV_E2) + height)*slat
     return x,y,z
 
-def get_orbits_setexe(year,month,day,orbtype):
+def get_orbits_setexe(year,month,day,orbtype,fortran):
     """
     helper script to make snr files
     takes year, month, day and orbit type
@@ -3526,6 +3526,8 @@ def get_orbits_setexe(year,month,day,orbtype):
     returns whether file was found, its name, the directory, and name of snrexe
     20apr15:  check for xz compression
     kristine larson
+    20sep04: fortran (boolean) sent as an input, so you know whether
+    to worry that the gpsSNR.e or gnssSNR.e executable does or does not exist
     """
     #default values
     foundit = False
@@ -3541,63 +3543,68 @@ def get_orbits_setexe(year,month,day,orbtype):
         # SHANGHAI multi gnss
         f,orbdir,foundit=getsp3file_mgex(year,month,day,'sha')
         snrexe = gnssSNR_version()
-        warn_and_exit(snrexe)
+        warn_and_exit(snrexe,fortran)
     elif (orbtype == 'grg'):
         # French multi gnss, but not Beidou
         f,orbdir,foundit=getsp3file_mgex(year,month,day,'grg')
         snrexe = gnssSNR_version()
-        warn_and_exit(snrexe)
+        warn_and_exit(snrexe,fortran)
     elif (orbtype == 'sp3'):
         print('uses default IGS orbits, so only GPS ?')
         f,orbdir,foundit=getsp3file_flex(year,month,day,'igs')
         snrexe = gnssSNR_version()
-        warn_and_exit(snrexe)
+        warn_and_exit(snrexe,fortran)
     elif (orbtype == 'gfz'):
         print('using gfz sp3 file, GPS and GLONASS') # though I advocate gbm
         f,orbdir,foundit=getsp3file_flex(year,month,day,'gfz')
         snrexe = gnssSNR_version()
-        warn_and_exit(snrexe)
+        warn_and_exit(snrexe,fortran)
     elif (orbtype == 'igr'):
         print('using rapid orbits, so only GPS')
         f,orbdir,foundit=getsp3file_flex(year,month,day,'igr') # use default
         snrexe = gnssSNR_version()
-        warn_and_exit(snrexe)
+        warn_and_exit(snrexe,fortran)
     elif (orbtype == 'igs'):
         print('using IGS final orbits, so only GPS')
         f,orbdir,foundit=getsp3file_flex(year,month,day,'igs') # use default
         snrexe = gnssSNR_version()
-        warn_and_exit(snrexe)
+        warn_and_exit(snrexe,fortran)
     elif (orbtype == 'gbm'):
         # this uses GFZ multi-GNSS and is rapid, but not super rapid
         f,orbdir,foundit=getsp3file_mgex(year,month,day,'gbm')
         snrexe = gnssSNR_version()
-        warn_and_exit(snrexe)
+        warn_and_exit(snrexe,fortran)
     elif (orbtype == 'wum'):
         # this uses WUHAN multi-GNSS which is ultra, but is not rapid ??
         # but only hour 00:00
         f,orbdir,foundit=getsp3file_mgex(year,month,day,'wum')
         snrexe = gnssSNR_version()
-        warn_and_exit(snrexe)
+        warn_and_exit(snrexe,fortran)
     elif orbtype == 'jax':
         # this uses JAXA, has GPS and GLONASS and appears to be quick and reliable
         f,orbdir,foundit=getsp3file_mgex(year,month,day,'jax')
         snrexe = gnssSNR_version()
-        warn_and_exit(snrexe)
+        warn_and_exit(snrexe,fortran)
     elif orbtype == 'nav':
         f,orbdir,foundit=getnavfile(year, month, day) # use default version, which is gps only
-        warn_and_exit(snrexe)
+        warn_and_exit(snrexe,fortran)
     else:
         print('I do not recognize the orbit type you tried to use: ', orbtype)
 
     return foundit, f, orbdir, snrexe
 
-def warn_and_exit(snrexe):
+def warn_and_exit(snrexe,fortran):
     """
     if snr executable does not exist, exit
+    2020sep04 - send it fortran boolean.  
     """
-    if (os.path.isfile(snrexe) == False):
-        print('The translation executable does not exist:' + snrexe + ' Exiting ')
-        sys.exit()
+    if not fortran:
+        print('not using fortran, so it does not matter if translation exe exists')
+    else:
+        print('you are using fortran, so good to check now if translation exe exists'
+        if (os.path.isfile(snrexe) == False):
+            print('The translation executable does not exist:' + snrexe + ' Exiting ')
+            sys.exit()
 
 def quick_rinex_snrC(year, doy, station, option, orbtype,receiverrate,dec_rate,archive):
     """
