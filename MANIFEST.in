@@ -1,2 +1,2 @@
 include README.md
-include data/*.pickle
+include gnssrefl0/gpt_1wA.pickle
