@@ -53,7 +53,7 @@ def conv2snr(year, doy, station, option, orbtype,receiverrate,dec_rate,archive,f
         d = g.doy2ymd(year,doy); 
         month = d.month; day = d.day
         # new function to do the whole orbit thing
-        foundit, f, orbdir, snrexe = g.get_orbits_setexe(year,month,day,orbtype) 
+        foundit, f, orbdir, snrexe = g.get_orbits_setexe(year,month,day,orbtype,fortran) 
         # if you have the orbit file, you can get the rinex file
         if foundit:
             # now you can look for a rinex file
