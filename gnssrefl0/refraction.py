@@ -280,9 +280,10 @@ def readWrite_gpt2_1w(xdir, station, site_lat, site_lon):
                 [All_pgrid, All_Tgrid, All_Qgrid, All_dTgrid, All_U, All_Hs, All_ahgrid, All_awgrid, All_lagrid, All_Tmgrid] = pickle.load(f)
                 f.close()
             except:
-                print('hmm, failed again. ... try data subdirectory ')
+                print('hmm, failed again. ... try data subdirectory in current directory')
+                pname =  xdir + '/data/gpt_1wA.pickle'
+                print(pname)
                 try:
-                    pname =  'data/gpt_1wA.pickle'
                     f = open(pname, 'rb')
                     [All_pgrid, All_Tgrid, All_Qgrid, All_dTgrid, All_U, All_Hs, All_ahgrid, All_awgrid, All_lagrid, All_Tmgrid] = pickle.load(f)
                     f.close()
