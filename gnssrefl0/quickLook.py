@@ -39,6 +39,11 @@ def main():
     parser.add_argument("-peak2noise",  default=None, type=float, help="quality control ratio")
     parser.add_argument("-fortran", default='True', type=str, help="True: use Fortran translators")
     args = parser.parse_args()
+
+
+#   make sure environment variables exist.  set to current directory if not
+    g.check_environ_variables()
+
 #
 # rename the user inputs as variables
 #

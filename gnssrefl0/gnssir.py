@@ -53,6 +53,10 @@ def main():
     parser.add_argument("-e2", "--e2", default=None, type=str, help="override max elev angle")
 
     args = parser.parse_args()
+
+#   make sure environment variables exist.  set to current directory if not
+    g.check_environ_variables()
+
 #
 # rename the user inputs as variables
 #

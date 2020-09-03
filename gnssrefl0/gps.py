@@ -4405,10 +4405,9 @@ def check_environ_variables():
     set to . 
     """
     variables= ['EXE','ORBITS','REFL_CODE']
-    print(variables)
     for env_var in variables:
         if env_var not in os.environ:
-            print(env_var, ' not found, so set')
+            print(env_var, ' not found, so set to current directory')
             os.environ[env_var] = '.'
         else:
             print('found the ', env_var, ' environment variable')

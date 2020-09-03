@@ -21,7 +21,11 @@ def read_4by5(station, dlat,dlon,hell):
     """
 #
     xdir = str(os.environ['REFL_CODE'])
-    obsfile = xdir + '/input/' + station + '_refr.txt'
+    inputpath = xdir + '/input/'
+#    if not os.path.isdir(inputpath): #if year folder doesn't exist, make it
+#        os.makedirs(inputpath)
+
+    obsfile = inputpath + station + '_refr.txt'
     print('reading from station refraction file: ', obsfile)
     x = np.genfromtxt(obsfile,comments='%')
     max_ind = 4
@@ -246,8 +250,12 @@ def readWrite_gpt2_1w(xdir, station, site_lat, site_lon):
     lat and lon in degrees (NOT RADIANS)
     kristine m. larson
     """
-#   this should use the environment variable
-    outfile = xdir + '/input/' + station + '_refr.txt'
+    # check that output path exists.  
+    outpath = xdir + '/input/'
+    if not os.path.isdir(outpath): 
+        os.makedirs(outpath)
+
+    outfile = outpath + station + '_refr.txt'
     if os.path.isfile(outfile):
         print('refraction file for this station already exists')
     else:
@@ -259,20 +267,28 @@ def readWrite_gpt2_1w(xdir, station, site_lat, site_lon):
 
 #   read VMF gridfile in pickle format 
         pname = xdir + '/input/' + 'gpt_1wA.pickle'
-        print('large refraction file is stored here:', pname)
+        print('large refraction file should be stored here:', pname)
         try:
             f = open(pname, 'rb')
             [All_pgrid, All_Tgrid, All_Qgrid, All_dTgrid, All_U, All_Hs, All_ahgrid, All_awgrid, All_lagrid, All_Tmgrid] = pickle.load(f)
             f.close()
         except:
-            print('I did not find the large refraction file where it is supposed to be, but I will try looking in your home directory')
+            print('I did not find it, will look in working directory')
             try:
                 pname =  'gpt_1wA.pickle'
                 f = open(pname, 'rb')
                 [All_pgrid, All_Tgrid, All_Qgrid, All_dTgrid, All_U, All_Hs, All_ahgrid, All_awgrid, All_lagrid, All_Tmgrid] = pickle.load(f)
                 f.close()
             except:
-                print('hmm, failed again. Go into gnssIR_lomb.py, set RefractionCorrection to false, and rerun the code.... ')
+                print('hmm, failed again. ... try data subdirectory ')
+                try:
+                    pname =  'data/gpt_1wA.pickle'
+                    f = open(pname, 'rb')
+                    [All_pgrid, All_Tgrid, All_Qgrid, All_dTgrid, All_U, All_Hs, All_ahgrid, All_awgrid, All_lagrid, All_Tmgrid] = pickle.load(f)
+                    f.close()
+                except:
+                    print('now I give up. You can go in the json file and turn refraction off if you are ok with that.')
+
                 sys.exit()
 
 #    print(np.shape(All_pgrid))

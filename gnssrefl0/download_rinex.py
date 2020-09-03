@@ -2,6 +2,7 @@
 """
 downloads RINEX files
 kristine larson
+2020sep03 - modified environment variable requirement
 """
 import argparse
 import gnssrefl0.gps as g
@@ -20,6 +21,11 @@ def main():
     parser.add_argument("-version", default=None, metavar=2,type=int, help="rinex version (2 or 3)")
 
     args = parser.parse_args()
+
+#   make sure environment variables exist.  set to current directory if not
+    g.check_environ_variables()
+
+#   assign to normal variables
     station = args.station
     year = args.year
     month = args.month
