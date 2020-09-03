@@ -19,6 +19,7 @@ setup(
     long_description=readme,
     url="https://github.com/kristinemlarson/gnssrefl0/",
     packages=find_packages(),
+    package_data={'data': ['gpt_1wA.pickle']},
     entry_points ={
         'console_scripts': [
             'gnssir= gnssrefl0.gnssir:main',
