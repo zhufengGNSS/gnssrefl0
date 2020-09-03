@@ -284,12 +284,9 @@ def readWrite_gpt2_1w(xdir, station, site_lat, site_lon):
                 cwd = os.getcwd()
                 pname =  cwd + '/data/gpt_1wA.pickle'
                 print(pname)
-                try:
-                    f = open(pname, 'rb')
-                    [All_pgrid, All_Tgrid, All_Qgrid, All_dTgrid, All_U, All_Hs, All_ahgrid, All_awgrid, All_lagrid, All_Tmgrid] = pickle.load(f)
-                    f.close()
-                except:
-                    print('now I give up. You can go in the json file and turn refraction off if you are ok with that.')
+                f = open(pname, 'rb')
+                [All_pgrid, All_Tgrid, All_Qgrid, All_dTgrid, All_U, All_Hs, All_ahgrid, All_awgrid, All_lagrid, All_Tmgrid] = pickle.load(f)
+                f.close()
 
                 sys.exit()
 
