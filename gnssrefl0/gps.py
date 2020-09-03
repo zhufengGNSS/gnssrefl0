@@ -3601,7 +3601,7 @@ def warn_and_exit(snrexe,fortran):
     if not fortran:
         print('not using fortran, so it does not matter if translation exe exists')
     else:
-        print('you are using fortran, so good to check now if translation exe exists'
+        print('you are using fortran, so good to check now if translation exe exists')
         if (os.path.isfile(snrexe) == False):
             print('The translation executable does not exist:' + snrexe + ' Exiting ')
             sys.exit()
