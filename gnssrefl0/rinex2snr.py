@@ -26,6 +26,9 @@ import gnssrefl0.rnx2snr as rnx
  
 def main():
 #
+#   make sure environment variables exist.  set to current directory if not
+    g.check_environ_variables()
+    # 
     parser = argparse.ArgumentParser()
     parser.add_argument("station", help="station name", type=str)
     parser.add_argument("year", help="year", type=int)

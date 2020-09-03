@@ -4389,3 +4389,20 @@ def unavco3(station9ch, year, doy,srate):
         fexists = True
 
     return fexists
+
+def check_environ_variables():
+    """
+    This is my attempt to make the code useable by people
+    that have not set EXE, REFL_CODE, or ORBITS environment
+    variables.  If that is the case, these variables will be 
+    set to . 
+    """
+    variables= ['EXE','ORBITS','REFL_CODE']
+    print(variables)
+    for env_var in variables:
+        if env_var not in os.environ:
+            print(env_var, ' not found, so set')
+            os.environ[env_var] = '.'
+        else:
+            print('found the ', env_var, ' environment variable')
+
