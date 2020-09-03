@@ -14,6 +14,7 @@ import sys
 import warnings
 
 import gnssrefl0.gnssir_guts as guts
+import gnssrefl0.gps as g
 # do i need these? i don't think so
 #import gnssrefl0.refraction as refr
 #from gnssrefl0 import gps as g
