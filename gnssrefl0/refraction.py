@@ -281,7 +281,7 @@ def readWrite_gpt2_1w(xdir, station, site_lat, site_lon):
                 f.close()
             except:
                 print('hmm, failed again. ... try data subdirectory in current directory')
-                pname =  xdir + '/data/gpt_1wA.pickle'
+                pname =  'data/gpt_1wA.pickle'
                 print(pname)
                 try:
                     f = open(pname, 'rb')
