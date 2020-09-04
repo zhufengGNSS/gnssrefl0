@@ -3,11 +3,6 @@ from setuptools import setup, find_packages
 with open("README.rst", "r") as readme_file:
     readme = readme_file.read()
 
-
-with open('LICENSE') as f:
-    license = f.read()
-
-
 requirements = ["numpy","wget","scipy","matplotlib","requests"]
 
 setup(
@@ -31,6 +26,9 @@ setup(
             'make_json_input = gnssrefl0.make_json_input:main',
             ],
         },
-    license=license,
+    classifiers=[
+        "Programming Language :: Python :: 3.7",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    ],
     install_requires=requirements,
 )
