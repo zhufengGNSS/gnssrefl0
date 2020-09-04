@@ -16,8 +16,6 @@ setup(
     author="Kristine M. Larson",
     author_email="kristinem.larson@gmail.com",
     description="GNSS Reflections package",
-    long_description=readme,
-    long_description_content_type="text/x-rst",
     url="https://github.com/kristinemlarson/gnssrefl0/",
     packages=find_packages(),
     package_data={'gnssrefl0': ['gpt_1wA.pickle']},
@@ -34,7 +32,6 @@ setup(
         },
     license=license,
     install_requires=requirements,
-    classifiers=[
-        "Programming Language :: Python :: 3.7",
-    ],
+    long_description=readme,
+    long_description_content_type="text/x-rst",
 )
