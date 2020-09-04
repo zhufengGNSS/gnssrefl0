@@ -255,7 +255,7 @@ def readWrite_gpt2_1w(xdir, station, site_lat, site_lon):
     print(PROJECT_ROOT)
     # this appears to be the one i want
     print(BASE_DIR)
-    try3 = BASE_DIR + '/' + 'gpt_1wA.pickle'
+    try3 = PROJECT_ROOT + '/' + 'gpt_1wA.pickle'
 
     # check that output path exists.  
     outpath = xdir + '/input/'
