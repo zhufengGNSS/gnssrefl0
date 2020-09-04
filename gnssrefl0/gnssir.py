@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
-
-
-import argparse
 import datetime
-import json
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import os
 import scipy.interpolate
 import scipy.signal
@@ -13,180 +9,167 @@ import subprocess
 import sys
 import warnings
 
-import gnssrefl0.gnssir_guts as guts
 import gnssrefl0.gps as g
-# do i need these? i don't think so
-#import gnssrefl0.refraction as refr
-#from gnssrefl0 import gps as g
-#from gnssrefl0.read_snr_files as snr
+import gnssrefl0.read_snr_files as snr
+import gnssrefl0.refraction as refr
 
+def gnssir_guts(station,year,doy, snr_type, extension,lsp):
+    """
+    my attempt to separate the inputs to the code and the guts of the code
+    inputs are station name, year, day of year (integers)
+    snr_type is an integer (99, 66, etc). lsp is a json
+    """
 
+    e1=lsp['e1']; e2=lsp['e2']; minH = lsp['minH']; maxH = lsp['maxH']
+    ediff = lsp['ediff']; NReg = lsp['NReg']  
+    PkNoise = lsp['PkNoise']; azval = lsp['azval']; naz = int(len(azval)/2)
+    freqs = lsp['freqs'] ; reqAmp = lsp['reqAmp'] 
+    plot_screen = lsp['plt_screen'] 
+    onesat = lsp['onesat']; screenstats = lsp['screenstats']
+    azval = lsp['azval']
 
-def main():
-# pick up the environment variable for where you are keeping your LSP data
-    print('=================================================================================')
-    print('===========================RUNNING GNSS IR ======================================')
-    print('=================================================================================')
- 
-#
-# user inputs the observation file information
-    parser = argparse.ArgumentParser()
-    parser.add_argument("station", help="station", type=str)
-    parser.add_argument("year", help="year", type=int)
-    parser.add_argument("doy", help="doy", type=int)
-    parser.add_argument("snrEnd", help="snr file ending", type=int)
+    d = g.doy2ymd(year,doy); month = d.month; day = d.day
+    dmjd, fracS = g.mjd(year,month,day,0,0,0)
+    xdir = os.environ['REFL_CODE']
+    ann = g.make_nav_dirs(year) # make sure directories are there for orbits
+    g.result_directories(station,year,extension) # make directories for the LSP results
 
-# optional inputs
-    parser.add_argument("-plt", "--plt", default=None, help="ploting is boolean now. Default is True", type=str)
-    parser.add_argument("-fr", "--fr", default=None, type=int, help="try -fr 1 for GPS L1 only, or -fr 101 for Glonass L1")
-    parser.add_argument("-ampl", "--ampl", default=None, type=float, help="try -ampl 5-6 for minimum spectral amplitude")
-    parser.add_argument("-sat", "--sat", default=None, type=int, help="allow individual satellite")
-    parser.add_argument("-doy_end", "--doy_end", default=None, type=int, help="doy end")
-    parser.add_argument("-year_end", "--year_end", default=None, type=int, help="year end")
-    parser.add_argument("-azim1", "--azim1", default=None, type=int, help="lower limit azimuth")
-    parser.add_argument("-azim2", "--azim2", default=None, type=int, help="upper limit azimuth")
-    parser.add_argument("-nooverwrite", "--nooverwrite", default=None, type=int, help="use any integer to not overwrite")
-    parser.add_argument("-extension", "--extension", default=None, type=str, help="extension for result file, useful for testing strategies")
-    parser.add_argument("-compress", "--compress", default=None, type=str, help="xz compress SNR files after use")
-    parser.add_argument("-screenstats", "--screenstats", default=None, type=str, help="some stats printed to screen(default is True)")
-    parser.add_argument("-delTmax", "--delTmax", default=None, type=int, help="Req satellite arc length (minutes)")
-    parser.add_argument("-e1", "--e1", default=None, type=str, help="override min elev angle")
-    parser.add_argument("-e2", "--e2", default=None, type=str, help="override max elev angle")
+   # this defines the minimum number of points in an arc.  This depends entirely on the sampling
+   # rate for the receiver, so you should not assume this value is relevant to your case.
+    minNumPts = 20
+    p,T,irefr = set_refraction_params(station, dmjd, lsp)
 
-    args = parser.parse_args()
+# only doing one day at a time for now - but have started defining the needed inputs for using it
+    twoDays = False
+    obsfile2= '' # dummy value for name of file for the day before, when we get to that
+    fname, resultExist = g.LSPresult_name(station,year,doy,extension) 
 
-#   make sure environment variables exist.  set to current directory if not
-    g.check_environ_variables()
-
-#
-# rename the user inputs as variables
-#
-    station = args.station
-    year = args.year
-    doy= args.doy
-    snr_type = args.snrEnd
-
-
-# get instructions first - not sure the logic will hold
-    instructions = str(os.environ['REFL_CODE']) + '/input/' + station + '.json'
-
-    if os.path.isfile(instructions):
-        with open(instructions) as f:
-            lsp = json.load(f)
-    else:
-        print('Instruction file does not exist: ', instructions)
-        print('Please make with make_json_input.py and run this code again.')
+    if (resultExist):
+        print('Results already exist on disk')
+    if (lsp['overwriteResults'] == False) & (resultExist == True):
+        allGood = 0
+        print('>>>>> The result file exists for this day and you have selected the do not overwrite option')
         sys.exit()
+    print('go ahead and access SNR data - first define SNR filename')
+    obsfile, obsfileCmp, snre = g.define_and_xz_snr(station,year,doy,snr_type) 
+    if (not snre) and (not lsp['seekRinex']):
+        print('SNR file does not exist and you have set the seekRinex variable to False')
+        print('Use rinex2snr.py to make SNR files')
+        sys.exit()
+    if (not snre) and lsp['seekRinex']:
+        print('SNR file does not exist. I will try to make a GPS only file.')
+        rate = 'low'; dec_rate = 0; orbtype = 'nav'
+        g.quick_rinex_snrC(year, doy, station, snr_type, orbtype,rate, dec_rate)
 
-    # now check the overrides
-    if (args.plt != None):
-        if args.plt == 'True':
-            lsp['plt_screen'] = True
-        if args.plt == 'False':
-            lsp['plt_screen'] = False
-    else:
-        lsp['plt_screen'] = True
-
-    if lsp['plt_screen']:
-        print('LSP plots will come to the screen')
-
-
-    if (args.delTmax != None):
-        lsp['delTmax'] = args.delTmax
-        print('Using user defined maximum satellite arc time (minutes) ', lsp['delTmax'])
-
-# though I would think not many people would do this ... 
-    if (args.compress != None):
-        if args.compress == 'True':
-            lsp['wantCompression'] = True
-        else:
-            lsp['wantCompression'] = False
-
-
-    if args.screenstats == 'False':
-        print('no statistics will come to the screen')
-        lsp['screenstats'] = False
-    else:
-        print('no statistics will come to the screen')
-        lsp['screenstats'] = True
-
-# in case you want to analyze multiple days of data
-    if args.doy_end == None:
-        doy_end = doy
-    else:
-        doy_end = args.doy_end
-
-# in case you want to analyze multiple years of data
-    if args.year_end == None:
-        year_end = year
-    else:
-        year_end = args.year_end
-
-
-# allow people to have an extension to the output file name so they can run different analysis strategies
-# this is undocumented and only for Kristine at the moment
-    if args.extension == None:
-        extension = ''
-    else:
-        extension = args.extension
-
-
-# default will be to overwrite
-    if args.nooverwrite == None:
-        lsp['overwriteResults'] = True
-        print('LSP results will be overwritten')
-    else:
-        lsp['overwriteResults'] = False
-        print('LSP results will not be overwritten')
-
-    if (args.e1 != None):
-        print('overriding minimum elevation angle: ',args.e1)
-        lsp['e1'] = float(args.e1)
-    if (args.e2 != None):
-        print('overriding maximum elevation angle: ',args.e2)
-        lsp['e2'] = float(args.e2)
-
-# number of azimuth regions 
-    naz = int(len(lsp['azval'])/2)
-# in case you want to look at a restricted azimuth range from the command line 
-    setA = 0
-    if args.azim1 == None:
-        azim1 = 0
-    else:
-        setA = 1; azim1 = args.azim1
-
-    if args.azim2 == None:
-        azim2 = 360
-    else:
-        azim2 = args.azim2; setA = setA + 1
-
-    if (setA == 2):
-        naz = 1; 
-        lsp['azval']  = [azim1,  azim2]
-
-# this is for when you want to run the code with just a single frequency, i.e. input at the console
-# rather than using the input restrictions
-    if args.fr != None:
-        lsp['freqs'] = [args.fr]
-        print('overriding frequency choices')
-    if args.ampl != None:
-        print('overriding amplitude choices')
-        lsp['reqAmp'] = [args.ampl]
-
-    if args.sat != None:
-        print('overriding - only looking at a single satellite')
-        lsp['onesat'] = [args.sat]
+    allGood,sat,ele,azi,t,edot,s1,s2,s5,s6,s7,s8,snrE = snr.read_snr_multiday(obsfile,obsfile2,twoDays)
+    snr.compress_snr_files(lsp['wantCompression'], obsfile, obsfile2,twoDays) 
+    # SNR exists - go ahead
+    if (allGood == 1):
+        ele=apply_refraction_corr(lsp,ele,p,T)
+        fout,frej = g.open_outputfile(station,year,doy,extension) 
+#  main loop a given list of frequencies
+        total_arcs = 0
+        ct = 0
+        for f in freqs:
+            if plot_screen: fig, (ax1, ax2) = plt.subplots(2, 1)
+            rj = 0
+            gj = 0
+            print('**** looking at frequency ', f, ' ReqAmp', reqAmp[ct], ' doy ', doy, 'YYYY/MM/DD', year, month, day )
+#   get the list of satellites for this frequency
+            if onesat == None:
+                satlist = g.find_satlist(f,snrE)
+            else:
+                satlist = onesat
+            for satNu in satlist:
+                if screenstats: print('Satellite', satNu)
+                for a in range(naz):
+                    az1 = azval[(a*2)] ; az2 = azval[(a*2 + 1)]
+                    x,y,Nv,cf,UTCtime,avgAzim,avgEdot,Edot2,delT= g.window_data(s1,s2,s5,s6,s7,s8,sat,ele,azi,t,edot,f,az1,az2,e1,e2,satNu,lsp['polyV'],lsp['pele'],screenstats) 
+                    MJD = g.getMJD(year,month,day, UTCtime)
+                    if Nv > minNumPts:
+                        maxF, maxAmp, eminObs, emaxObs,riseSet,px,pz= g.strip_compute(x,y,cf,maxH,lsp['desiredP'],lsp['polyV'],minH) 
+                        nij =   pz[(px > NReg[0]) & (px < NReg[1])]
+                        Noise = 0
+                        if (len(nij) > 0):
+                            Noise = np.mean(nij)
+                        iAzim = int(avgAzim)
+                        okPk = True
+                        if abs(maxF - minH) < 0.10: #  peak too close to min value
+                            okPk = False
+                            print('found a peak too close to the edge of the restricted RH region')
+                        if okPk & (delT < lsp['delTmax']) & (eminObs < (e1 + ediff)) & (emaxObs > (e2 - ediff)) & (maxAmp > reqAmp[ct]) & (maxAmp/Noise > PkNoise):
+                            fout.write(" {0:4.0f} {1:3.0f} {2:6.3f} {3:3.0f} {4:6.3f} {5:6.2f} {6:6.2f} {7:6.2f} {8:6.2f} {9:4.0f} {10:3.0f} {11:2.0f} {12:8.5f} {13:6.2f} {14:7.2f} {15:12.6f} {16:1.0f} \n".format(year,doy,maxF,satNu, UTCtime, avgAzim,maxAmp,eminObs,emaxObs,Nv, f,riseSet, Edot2, maxAmp/Noise, delT, MJD,irefr)) 
+                            gj +=1
+                            if screenstats:
+                                T = g.nicerTime(UTCtime)
+                                print('SUCCESS Azimuth {0:3.0f} Sat {1:3.0f} RH {2:7.3f} m PkNoise {3:4.1f} AMp {4:4.1f} Fr{5:3.0f} UTC {6:5s}'.format(iAzim,satNu,maxF,maxAmp/Noise,maxAmp, f,T))
+                            if plot_screen:
+                                local_update_plot(x,y,px,pz,ax1,ax2)
+                        else:
+                            rj +=1
+                            if screenstats:
+                                print('FAILED QC for Azimuth {0:.1f} Satellite {1:2.0f} UTC {2:5.2f}'.format( iAzim,satNu,UTCtime))
+                                g.write_QC_fails(delT,lsp['delTmax'],eminObs,emaxObs,e1,e2,ediff,maxAmp, Noise,PkNoise,reqAmp[ct])
+            print('=================================================================================')
+            print('     Frequency ', f, ' good arcs:', gj, ' rejected arcs:', rj )
+            print('=================================================================================')
+            total_arcs = gj + total_arcs
+# close the output files
+            ct += 1
+            #'Yes' if fruit == 'Apple' else 'No'
+            if plot_screen: plot2screen(station, f, ax1, ax2,lsp['pltname']) 
+        fout.close() ; # these are the LSP results written to text file 
 
 
-    print(lsp)
+def set_refraction_params(station, dmjd,lsp):
+    """
+    called from guts.  pick up refr info
+    inputs are station name, modified julian day, and the 
+    lsp dictionary
+    """
+    xdir = os.environ['REFL_CODE']
+    p = 0; T = 0; irefr = 0
+    if lsp['refraction']:
+        irefr = 1
+        refr.readWrite_gpt2_1w(xdir, station, lsp['lat'], lsp['lon'])
+# time varying is set to no for now (it = 1)
+        it = 1
+        dlat = lsp['lat']*np.pi/180; dlong = lsp['lon']*np.pi/180; ht = lsp['ht']
+        p,T,dT,Tm,e,ah,aw,la,undu = refr.gpt2_1w(station, dmjd,dlat,dlong,ht,it)
+        print("Pressure {0:8.2f} Temperature {1:6.1f} \n".format(p,T))
 
-    year_list = list(range(year, year_end+1))
-    doy_list = list(range(doy, doy_end+1))
-    for year in year_list:
-        for doy in doy_list:
-            guts.gnssir_guts(station,year,doy, snr_type, extension,lsp)
+    return p,T,irefr
+
+def apply_refraction_corr(lsp,ele,p,T):
+    """
+    """
+    if lsp['refraction']:
+        print('<<<<<< apply refraction correction >>>>>>')
+        corrE = refr.corr_el_angles(ele, p,T)
+        ele = corrE
+
+    return ele
+
+def local_update_plot(x,y,px,pz,ax1, ax2):
+    """
+    input plt_screen integer value from gnssIR_lomb.
+    (value of one means update the SNR and LSP plot)
+    and values of the SNR data (x,y) and LSP (px,pz)
+    """
+    ax1.plot(x,y)
+    ax2.plot(px,pz)
 
 
-if __name__ == "__main__":
-    main()
+def plot2screen(station, f,ax1,ax2,pltname):
+    """
+    painful painful
+    https://www.semicolonworld.com/question/57658/matplotlib-adding-an-axes-using-the-same-arguments-as-a-previous-axes
+    """
+    print(pltname)
+    ax2.set_xlabel('Reflector Height (m)'); 
+    ax2.set_title('SNR periodogram')
+    ax1.set_xlabel('Elevation Angles (deg)')
+    ax1.set_title(station + ' SNR Data and Frequency L' + str(f))
+    plt.show()
 
+    return True
