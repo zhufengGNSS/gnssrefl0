@@ -12,7 +12,7 @@ requirements = ["numpy","wget","scipy","matplotlib","requests"]
 
 setup(
     name="gnssrefl0",
-    version="0.0.4",
+    version="0.0.5",
     author="Kristine M. Larson",
     author_email="kristinem.larson@gmail.com",
     description="GNSS Reflections package",
@@ -23,7 +23,7 @@ setup(
     include_package_data=True,
     entry_points ={
         'console_scripts': [
-            'gnssir= gnssrefl0.gnssir_cl:main',
+            'gnssir_test= gnssrefl0.gnssir_cl:main',
             'rinex2snr = gnssrefl0.rinex2snr:main',
             'ymd = gnssrefl0.ymd:main',
             'quickLook = gnssrefl0.quickLook:main',
