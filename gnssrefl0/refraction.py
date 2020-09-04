@@ -253,7 +253,9 @@ def readWrite_gpt2_1w(xdir, station, site_lat, site_lon):
     PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
     BASE_DIR = os.path.dirname(PROJECT_ROOT)
     print(PROJECT_ROOT)
+    # this appears to be the one i want
     print(BASE_DIR)
+    try3 = BASE_DIR + '/' + 'gpt_1wA.pickle'
 
     # check that output path exists.  
     outpath = xdir + '/input/'
@@ -285,10 +287,10 @@ def readWrite_gpt2_1w(xdir, station, site_lat, site_lon):
                 [All_pgrid, All_Tgrid, All_Qgrid, All_dTgrid, All_U, All_Hs, All_ahgrid, All_awgrid, All_lagrid, All_Tmgrid] = pickle.load(f)
                 f.close()
             except:
-                print('hmm, failed again. ... try data subdirectory ')
-                cwd = os.getcwd()
-                pname =  cwd + '/data/gpt_1wA.pickle'
-                pname =   'gnssrefl0/gpt_1wA.pickle'
+                print('hmm, failed again. ... try yet again')
+                #cwd = os.getcwd()
+                #pname =  cwd + '/data/gpt_1wA.pickle'
+                pname =   try3
                 print(pname)
                 f = open(pname, 'rb')
                 [All_pgrid, All_Tgrid, All_Qgrid, All_dTgrid, All_U, All_Hs, All_ahgrid, All_awgrid, All_lagrid, All_Tmgrid] = pickle.load(f)
