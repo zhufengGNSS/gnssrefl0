@@ -7,7 +7,7 @@ requirements = ["numpy","wget","scipy","matplotlib","requests"]
 
 setup(
     name="gnssrefl0",
-    version="0.0.6",
+    version="0.0.7",
     author="Kristine Larson",
     author_email="kristinem.larson@gmail.com",
     description="A package to do not much ",
