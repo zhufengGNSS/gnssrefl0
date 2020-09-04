@@ -292,11 +292,14 @@ def readWrite_gpt2_1w(xdir, station, site_lat, site_lon):
                 #pname =  cwd + '/data/gpt_1wA.pickle'
                 pname =   try3
                 print(pname)
-                f = open(pname, 'rb')
-                [All_pgrid, All_Tgrid, All_Qgrid, All_dTgrid, All_U, All_Hs, All_ahgrid, All_awgrid, All_lagrid, All_Tmgrid] = pickle.load(f)
-                f.close()
+                try:
+                    f = open(pname, 'rb')
+                    [All_pgrid, All_Tgrid, All_Qgrid, All_dTgrid, All_U, All_Hs, All_ahgrid, All_awgrid, All_lagrid, All_Tmgrid] = pickle.load(f)
+                    f.close()
+                except:
+                    print('could not get this done')
+                    sys.exit()
 
-                sys.exit()
 
 #    print(np.shape(All_pgrid))
 # really should e zero to four, but whatever
