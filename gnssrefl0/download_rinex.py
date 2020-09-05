@@ -63,6 +63,7 @@ def main():
 
 
     NS = len(station)
+    # RINEX version 3
     if version == 3:
         if NS == 9:
             srate = 30 # rate supported by CDDIS
@@ -75,10 +76,11 @@ def main():
                 print('RINEX DOWNLOAD SUCCESSFUL')
         else:
             print('exiting: station names must have 9 characters')
-    else:
+    else: # RINEX VERSION 2
         if NS == 4:
             g.go_get_rinex_flex(station,year,month,day,rate,archive)
         else:
             print('exiting: station names must have 4 characters, lowercase please')
+
 if __name__ == "__main__":
     main()

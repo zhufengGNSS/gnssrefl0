@@ -10,8 +10,6 @@ import sys
 import subprocess
 from scipy.interpolate import interp1d
  
-#from gnssrefl0 import rinpy as rinpy
-#from gnssrefl0 import gps as g
 import gnssrefl0.rinpy as rinpy
 import gnssrefl0.gps as g
 
@@ -492,7 +490,7 @@ def extract_snr(prn, con, obslist,obsdata,prntoidx,not_ij,emp):
 
 def elev_limits(snroption):
     """
-    given Kristine's snr option, return min and max elevaiton angles
+    given Kristine's snr option, return min and max elevation angles
     in degrees
     author: kristine larson
     2020 august 7
