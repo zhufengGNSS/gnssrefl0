@@ -1,3 +1,6 @@
+"""
+quickLook functions - consolidated snr reader (previously in a separate file)
+"""
 import sys
 import os
 import numpy as np
@@ -8,8 +11,66 @@ import scipy.interpolate
 import scipy.signal
 
 import gnssrefl0.gps as g
-import gnssrefl0.quick_read_snr as q
-import gnssrefl0.rnx2snr as rnx
+#import gnssrefl0.quick_read_snr as q
+#import gnssrefl0.rnx2snr as rnx
+import gnssrefl0.rinex2snr as rinex
+
+
+def read_snr_simple(obsfile):
+    """
+    author: Kristine Larson
+    input: SNR observation filenames and a boolean for 
+    whether you want just the first day (twoDays)
+    output: contents of the SNR file, withe various other metrics
+    """
+#   defaults so all returned vectors have something stored in them
+    sat=[]; ele =[]; azi = []; t=[]; edot=[]; s1=[];
+    s2=[]; s5=[]; s6=[]; s7=[]; s8=[];
+    snrE = np.array([False, True, True,False,False,True,True,True,True],dtype = bool)
+#   
+    allGood = 1
+    try:
+        f = np.genfromtxt(obsfile,comments='%')
+        r,c = f.shape
+        print('read_snr_simple, Number of rows:', r, ' Number of columns:',c)
+        sat = f[:,0]; ele = f[:,1]; azi = f[:,2]; t =  f[:,3]
+        edot =  f[:,4]; s1 = f[:,6]; s2 = f[:,7]; s6 = f[:,5]
+        s1 = np.power(10,(s1/20))  
+        s2 = np.power(10,(s2/20))  
+        s6 = s6/20; s6 = np.power(10,s6)  
+#   make sure s5 has default value?
+        s5 = []
+        if c > 8:
+            s5 = f[:,8]
+            if (sum(s5) > 0):
+                s5 = s5/20; s5 = np.power(10,s5)  
+            print(len(s5))
+        if c > 9:
+            s7 = f[:,9]
+            if (sum(s7) > 0):
+                s7 = np.power(10,(s7/20))  
+            else:
+                s7 = []
+        if c > 10:
+            s8 = f[:,10]
+            if (sum(s8) > 0):
+                s8 = np.power(10,(s8/20))  
+            else:
+                s8 = []
+        if (np.sum(s5) == 0):
+            snrE[5] = False; #print('no s5 data')
+        if (np.sum(s6) == 0):
+            #print('no s6 data'); 
+            snrE[6] = False
+        if (np.sum(s7) == 0):
+           # print('no s7 data'); 
+            snrE[7] = False
+        if (np.sum(s8) == 0):
+            snrE[8] = False; # print('no s8 data')
+    except:
+        print('problem reading the SNR file')
+        allGood = 0
+    return allGood, sat, ele, azi, t, edot, s1, s2, s5, s6, s7, s8, snrE
 
 
 def quickLook_function(station, year, doy, snr_type,f,e1,e2,minH,maxH,reqAmp,pele,satsel,PkNoise,fortran):
@@ -68,12 +129,12 @@ def quickLook_function(station, year, doy, snr_type,f,e1,e2,minH,maxH,reqAmp,pel
                 print('and translate it for you. This will be GPS only.')
                 print('For now I will check all the official archives for you.')
                 rate = 'low'; dec_rate = 0; archive = 'all'; 
-                rnx.conv2snr(year, doy, station, int(snr_type), 'nav',rate,dec_rate,archive,fortran)
+                rinex.conv2snr(year, doy, station, int(snr_type), 'nav',rate,dec_rate,archive,fortran)
                 if os.path.isfile(obsfile):
                     print('the SNR file now exists')  
                 else:
                     print('the RINEX file did not exist, had no SNR data, or failed to convert, so exiting.')
-    allGood,sat,ele,azi,t,edot,s1,s2,s5,s6,s7,s8,snrE = q.read_snr_simple(obsfile)
+    allGood,sat,ele,azi,t,edot,s1,s2,s5,s6,s7,s8,snrE = read_snr_simple(obsfile)
     if allGood == 1:
         amax = 0
         minEdataset = np.min(ele)

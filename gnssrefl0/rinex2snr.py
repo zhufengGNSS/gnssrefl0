@@ -23,10 +23,10 @@ def run_rinex2snr(station, year_list, doy_list, isnr, orbtype, rate,dec_rate,arc
     """
     runs the rinex 2 snr conversion
     """
-    ann = g.make_nav_dirs(year)
 
 # loop thru years and days 
     for year in year_list:
+        ann = g.make_nav_dirs(year)
         for doy in doy_list:
             cdoy = '{:03d}'.format(doy) ; cyy = '{:02d}'.format(year-2000)
             # first, check to see if the SNR file exists
