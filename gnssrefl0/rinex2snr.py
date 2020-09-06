@@ -28,9 +28,10 @@ def run_rinex2snr(station, year_list, doy_list, isnr, orbtype, rate,dec_rate,arc
     for year in year_list:
         ann = g.make_nav_dirs(year)
         for doy in doy_list:
+            csnr = str(isnr)
             cdoy = '{:03d}'.format(doy) ; cyy = '{:02d}'.format(year-2000)
             # first, check to see if the SNR file exists
-            snre = g.snr_exist(station,year,doy,snrt)
+            snre = g.snr_exist(station,year,doy,csnr)
             if snre:
                 print('snr file already exists')
             else:
