@@ -43,7 +43,7 @@ def main():
     station = args.station; NS = len(station)
     if (NS == 4) or (NS == 9):
         print('nominally valid station name')
-    elif:
+    else:
         print('Illegal input - Station must have 4 or 9 characters')
         sys.exit()
     year = args.year
