@@ -35,6 +35,18 @@ def run_rinex2snr(station, year_list, doy_list, isnr, orbtype, rate,dec_rate,arc
     nol = boolean for nolook, if set to True, then it will assume RINEX files are in local directory
     """
 
+    NS = len(station)
+    if (NS == 4):
+        print('Assume RINEX 2.11'); version = 2
+        station = station.lower()
+    elif (NS == 9):
+        print('Assume RINEX 3'); version = 3
+        station9ch = station.upper()
+        station = station[0:4].lower()
+    else:
+        print('Illegal station input - Station must have 4 or 9 characters. Exiting')
+        sys.exit()
+
 # loop thru years and days 
     for year in year_list:
         ann = g.make_nav_dirs(year)

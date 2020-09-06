@@ -41,15 +41,10 @@ def main():
 # rename the user inputs as variables
 #
     station = args.station; NS = len(station)
-    if (NS == 4):
-        print('Assume RINEX 2.11'); version = 2
-        station = station.lower()
-    elif (NS == 9):
-        print('Assume RINEX 3'); version = 3
-        station9ch = station.upper()
-        station = station[0:4].lower()
-    else:
-        print('illegal input - Station must have 4 or 9 characters')
+    if (NS == 4) or (NS == 9):
+        print('nominally valid station name')
+    elif:
+        print('Illegal input - Station must have 4 or 9 characters')
         sys.exit()
     year = args.year
     doy1= args.doy1
