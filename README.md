@@ -52,3 +52,26 @@ If you are using the version from gitHub:
 
 If you use the PyPi version, I think it installs everything for you??? (right now it is on test.pypi.org)
 
+# Non-python in the code
+
+All executables should be stored in the EXE directory.  If you do not define EXE, it will look for them in your 
+local working directory.  The Fortran translators are much faster than using python. But if you don't want to use them,
+they are optional, that's fine. FYI, the python version is slow not because of the RINEX - it is because you need to calculate
+a crude model for satellite coordinates in this code. And that takes cpu time....
+
+* Required translator CRX2RNX, http://terras.gsi.go.jp/ja/crx2rnx.html
+
+* Optional Fortran RINEX Translator for GPS, the executable must be called gpsSNR.e, https://github.com/kristinemlarson/gpsonlySNR
+
+* Optional Fortran RINEX translator for multi-GNSS, the executable must be called gnssSNR.e, https://github.com/kristinemlarson/gnssSNR
+
+* Optional datatool, teqc is but highly recommended.  There is a list of static executables at the
+bottom of [this page](http://www.unavco.org/software/data-processing/teqc/teqc.html)
+
+* Optional datatool, gfzrnx is required if you plan to use the RINEX 3 option. Executables available from the GFZ,
+http://dx.doi.org/10.5880/GFZ.1.1.2016.002
+
+
+# GNSS Data
+
+
