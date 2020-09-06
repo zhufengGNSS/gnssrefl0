@@ -19,9 +19,20 @@ class constants:
     c= 299792458 # m/sec
  
 #
-def run_rinex2snr(station, year_list, doy_list, isnr, orbtype, rate,dec_rate,archive,fortran):
+def run_rinex2snr(station, year_list, doy_list, isnr, orbtype, rate,dec_rate,archive,fortran,nol):
     """
     runs the rinex 2 snr conversion
+    inputs:
+    station name 
+    year_list list of years to be analyzed
+    doy_list list of doy to be analyzed
+    isnr = integer file type choice
+    orbtype = 3character orbit type
+    rate = high or low
+    dec_rate = integer for decimation
+    archive = allows you to pick a specific archive
+    fortran = boolean, whether you use fortran rinex translators
+    nol = boolean for nolook, if set to True, then it will assume RINEX files are in local directory
     """
 
 # loop thru years and days 

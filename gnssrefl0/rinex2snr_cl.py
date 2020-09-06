@@ -111,7 +111,7 @@ def main():
     year_list = list(range(year1, year2+1))
 
 # this sets up the loops
-    rnx.run_rinex2snr(station, year_list, doy_list, isnr, orbtype, rate,dec_rate,archive,fortran)
+    rnx.run_rinex2snr(station, year_list, doy_list, isnr, orbtype, rate,dec_rate,archive,fortran,nol)
 
 
 if __name__ == "__main__":
