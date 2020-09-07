@@ -72,6 +72,58 @@ bottom of [this page](http://www.unavco.org/software/data-processing/teqc/teqc.h
 http://dx.doi.org/10.5880/GFZ.1.1.2016.002
 
 
-# GNSS Data
+# Making SNR files from RINEX files
 
+I run a lowercase shop. Please name RINEX files accordingly and use lowercase station names.
+
+A RINEX file has extraneous information in it (the data used for positioning) - and does not provide some of the 
+information needed (elevation and azimuth angles) for reflectometry. The first task you 
+have is to translate a data file from
+RINEX into what I will call a SNR format - and to calculate those geometric angles.  
+For the latter you will need an orbit file. If you tell it which
+kind of orbit file you want, the code will go get it for you.  
+Secondly, you will need to decide how much of the data file you want to save. If you are new
+to the systems, I would choose **option 99**, which is all data between elevation angles of 5 and 30 degrees.
+
+The command line driver is **rinex2snr**. You need to tell the porgram the name of the station,
+the year and doy of year, your orbit file preference, and your SNR format type.
+A sample call for a station called p041, restricted to GPS 
+satellites, on day of year 132 and year 2020 would be:
+
+
+*rinex2snr p041 2020 132 99 nav*
+
+If the RINEX file for p041 is in your local directory, it will translate it.  If not, 
+it will check four archives (unavco, sopac, cddis, and sonel) to find it. 
+I will also search ga (geoscience Australia), nz (New Zealand), ngs, and bkg if you invoke -archive,
+e.g.
+
+*rinex2snr tgho 2020 132 99 nav -archive nz*
+ 
+
+If your station name has 9 characters, the code assumes you are looking for a
+RINEX 3 file. However, it will store the SNR data using the normal
+4 character name.
+
+
+The snr options are always two digit numbers.  Choices are:
+
+- 99 is elevation angles of 5-30 degrees  (most applications)
+
+- 88 is elevation angles of 5-90 degrees
+
+- 66 is elevation angles less than 30 degrees
+
+- 50 is elevation angles less than 10 degrees (tall, high-rate applications)
+
+orbit file options:
+
+- nav : GPS broadcast, perfectly adequate for reflectometry
+- igs : IGS precise, GPS only
+- igr : IGS rapid, GPS only
+- jax : JAXA, GPS + great for getting Glonass within a few days
+- gbm : GFZ Potsdam, multi-GNSS
+- grg: French group, GPS, Galileo and Gloanss  
+- sha : Shanghao, all constellations, but not rapid
+- wum : Wuhan, , all constellations, but not rapid
 

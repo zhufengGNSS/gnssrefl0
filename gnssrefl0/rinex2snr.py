@@ -56,17 +56,18 @@ def run_rinex2snr(station, year_list, doy_list, isnr, orbtype, rate,dec_rate,arc
             # first, check to see if the SNR file exists
             snre = g.snr_exist(station,year,doy,csnr)
             if snre:
-                print('snr file already exists')
+                print('snr file for ', station, str(year), cdoy, csnr, ' already exists')
             else:
                 r = station + cdoy + '0.' + cyy + 'o'
-                print(year, doy, ' will try to find/make from : ', r)
+                print(station, year, doy, ': will try to find RINEX /make SNR ')
                 if nol:
-                    print('No Look Option')
                     if os.path.exists(r):
-                        print('rinex file exists locally')
+                        print('RINEX file exists locally')
                         conv2snr(year, doy, station, isnr, orbtype,rate,dec_rate,archive,fortran) 
+                    else:
+                        print('You Chose the No Look Option, but did not provide the needed RINEX file.')
                 else:
-                    print('will look locally and externally')
+                    print('will look for the RINEX file both locally and externally')
                     if version == 3:
                         print('rinex 3 search with orbtype ', orbtype)
                         srate = 30 # rate supported by CDDIS 
