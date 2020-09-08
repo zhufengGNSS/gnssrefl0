@@ -64,7 +64,7 @@ def main():
     snr_type = args.snrEnd
 
 
-# get instructions first - not sure the logic will hold
+# get instructions first - this should be a standalone function
     instructions = str(os.environ['REFL_CODE']) + '/input/' + station + '.json'
 
     if os.path.isfile(instructions):
@@ -72,7 +72,7 @@ def main():
             lsp = json.load(f)
     else:
         print('Instruction file does not exist: ', instructions)
-        print('Please make with make_json_input.py and run this code again.')
+        print('Please make with make_json_input and run this code again.')
         sys.exit()
 
     # now check the overrides

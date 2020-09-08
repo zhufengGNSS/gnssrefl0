@@ -7,10 +7,10 @@ requirements = ["numpy","wget","scipy","matplotlib","requests"]
 
 setup(
     name="gnssrefl0",
-    version="0.0.8",
+    version="0.0.9",
     author="Kristine Larson",
     author_email="kristinem.larson@gmail.com",
-    description="A package to do not much ",
+    description="A GNSS reflectometry software package ",
     long_description=readme,
     long_description_content_type="text/markdown",
     url="https://github.com/kristinemlarson/gnssrefl0/",

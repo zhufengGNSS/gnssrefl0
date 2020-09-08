@@ -20,6 +20,9 @@ def gnssir_guts(station,year,doy, snr_type, extension,lsp):
     snr_type is an integer (99, 66, etc). lsp is a json
     """
 
+    #   make sure environment variables exist.  set to current directory if not
+    g.check_environ_variables()
+
     e1=lsp['e1']; e2=lsp['e2']; minH = lsp['minH']; maxH = lsp['maxH']
     ediff = lsp['ediff']; NReg = lsp['NReg']  
     PkNoise = lsp['PkNoise']; azval = lsp['azval']; naz = int(len(azval)/2)
