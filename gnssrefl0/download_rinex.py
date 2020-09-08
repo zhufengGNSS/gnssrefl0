@@ -6,7 +6,7 @@ kristine larson
 """
 import argparse
 import gnssrefl0.gps as g
-import gnssrefl0.rnx2snr as rnx
+#import gnssrefl0.rnx2snr as rnx
 
 def main():
 

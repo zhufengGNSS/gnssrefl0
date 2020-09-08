@@ -51,8 +51,8 @@ def main():
     snrt = args.snrEnd # string
     isnr = int(snrt)
     orbtype = args.orbType
-# currently allowed orbit types
-    orbit_list = ['nav', 'igs','igr','gbm','jax','grg','sha','wum']
+# currently allowed orbit types - sha removed 2020sep08
+    orbit_list = ['nav', 'igs','igr','gbm','jax','grg','wum']
     if orbtype not in orbit_list:
         print('You picked an orbit type I do not recognize. Here are the ones I allow')
         print(orbit_list)

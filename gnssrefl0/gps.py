@@ -933,6 +933,7 @@ def getsp3file_mgex(year,month,day,pCtr):
         file2 = 'GRG0MGXFIN_' + cyyyy + cdoy + '0000_01D_15M_ORB.SP3.gz'
     if pCtr == 'sha': # shanghai observatory
         # change to 15 min 2020sep08
+        # this blew up - do not know why. removing Shanghai for now
         file2 = 'SHA0MGXRAP_' + cyyyy + cdoy + '0000_01D_15M_ORB.SP3.gz'
     # try out JAXA - should have GPS and glonass
     if pCtr == 'jax':
@@ -3535,60 +3536,49 @@ def get_orbits_setexe(year,month,day,orbtype,fortran):
     f=''; orbdir=''
     # define directory for the conversion executables
     exedir = os.environ['EXE']
-    snrexe = gpsSNR_version()
-    # this means you are using multi-GNSS and GFZ
-    #f,orbdir,foundit=getsp3file_mgex(year,month,day,'gbm')
-    #snrexe = gnssSNR_version()
     #warn_and_exit(snrexe)
-    if orbtype == 'sha':
-        # SHANGHAI multi gnss
-        f,orbdir,foundit=getsp3file_mgex(year,month,day,'sha')
-        snrexe = gnssSNR_version()
-        warn_and_exit(snrexe,fortran)
-    elif (orbtype == 'grg'):
-        # French multi gnss, but not Beidou
+# removed Shanghai.  Something was amiss
+#    if orbtype == 'sha':
+#        # SHANGHAI multi gnss
+#        f,orbdir,foundit=getsp3file_mgex(year,month,day,'sha')
+#        snrexe = gnssSNR_version()
+#        warn_and_exit(snrexe,fortran)
+    if (orbtype == 'grg'):
+        # French multi gnss, but there are no Beidou results
         f,orbdir,foundit=getsp3file_mgex(year,month,day,'grg')
-        snrexe = gnssSNR_version()
-        warn_and_exit(snrexe,fortran)
+        snrexe = gnssSNR_version() ; warn_and_exit(snrexe,fortran)
     elif (orbtype == 'sp3'):
         print('uses default IGS orbits, so only GPS ?')
         f,orbdir,foundit=getsp3file_flex(year,month,day,'igs')
-        snrexe = gnssSNR_version()
-        warn_and_exit(snrexe,fortran)
+        snrexe = gnssSNR_version() ; warn_and_exit(snrexe,fortran)
     elif (orbtype == 'gfz'):
         print('using gfz sp3 file, GPS and GLONASS') # though I advocate gbm
         f,orbdir,foundit=getsp3file_flex(year,month,day,'gfz')
-        snrexe = gnssSNR_version()
-        warn_and_exit(snrexe,fortran)
+        snrexe = gnssSNR_version() ; warn_and_exit(snrexe,fortran)
     elif (orbtype == 'igr'):
-        print('using rapid orbits, so only GPS')
+        print('using rapid IGS orbits, so only GPS')
         f,orbdir,foundit=getsp3file_flex(year,month,day,'igr') # use default
-        snrexe = gnssSNR_version()
-        warn_and_exit(snrexe,fortran)
+        snrexe = gnssSNR_version() ; warn_and_exit(snrexe,fortran)
     elif (orbtype == 'igs'):
         print('using IGS final orbits, so only GPS')
         f,orbdir,foundit=getsp3file_flex(year,month,day,'igs') # use default
-        snrexe = gnssSNR_version()
-        warn_and_exit(snrexe,fortran)
+        snrexe = gnssSNR_version(); warn_and_exit(snrexe,fortran)
     elif (orbtype == 'gbm'):
         # this uses GFZ multi-GNSS and is rapid, but not super rapid
         f,orbdir,foundit=getsp3file_mgex(year,month,day,'gbm')
-        snrexe = gnssSNR_version()
-        warn_and_exit(snrexe,fortran)
+        snrexe = gnssSNR_version() ; warn_and_exit(snrexe,fortran)
     elif (orbtype == 'wum'):
         # this uses WUHAN multi-GNSS which is ultra, but is not rapid ??
         # but only hour 00:00
         f,orbdir,foundit=getsp3file_mgex(year,month,day,'wum')
-        snrexe = gnssSNR_version()
-        warn_and_exit(snrexe,fortran)
+        snrexe = gnssSNR_version() ; warn_and_exit(snrexe,fortran)
     elif orbtype == 'jax':
         # this uses JAXA, has GPS and GLONASS and appears to be quick and reliable
         f,orbdir,foundit=getsp3file_mgex(year,month,day,'jax')
-        snrexe = gnssSNR_version()
-        warn_and_exit(snrexe,fortran)
+        snrexe = gnssSNR_version(); warn_and_exit(snrexe,fortran)
     elif orbtype == 'nav':
         f,orbdir,foundit=getnavfile(year, month, day) # use default version, which is gps only
-        warn_and_exit(snrexe,fortran)
+        snrexe = gpsSNR_version() ; warn_and_exit(snrexe,fortran)
     else:
         print('I do not recognize the orbit type you tried to use: ', orbtype)
 
@@ -3600,7 +3590,8 @@ def warn_and_exit(snrexe,fortran):
     2020sep04 - send it fortran boolean.  
     """
     if not fortran:
-        print('not using fortran, so it does not matter if translation exe exists')
+        ok = 1
+        #print('not using fortran, so it does not matter if translation exe exists')
     else:
         print('you are using fortran, so good to check now if translation exe exists')
         if (os.path.isfile(snrexe) == False):
@@ -4410,6 +4401,7 @@ def check_environ_variables():
         if env_var not in os.environ:
             print(env_var, ' not found, so set to current directory')
             os.environ[env_var] = '.'
-        else:
-            print('found the ', env_var, ' environment variable')
+
+# don't need to print out success
+#print('found the ', env_var, ' environment variable')
 

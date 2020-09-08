@@ -4,8 +4,11 @@
 # Purpose: help set up json input file needed for gnssIR_lomb.py
 
 import argparse
-import os
 import json
+import os
+import subprocess
+
+import gnssrefl0.gps as g
 
 def main():
 
@@ -26,6 +29,10 @@ def main():
     parser.add_argument("-peak2noise", "--peak2noise", default=None, type=float, help="peak 2 noise ratio used for QC")
     args = parser.parse_args()
 #
+
+# make sure environment variables exist
+    g.check_environ_variables()
+
 # rename the user inputs into variables
 #
     station = args.station

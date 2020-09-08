@@ -86,6 +86,9 @@ def quickLook_function(station, year, doy, snr_type,f,e1,e2,minH,maxH,reqAmp,pel
     KL 20may10 pk2noise value is now sent from main function, which can be set online
     KL 20aug07 added fortran boolean
     """
+    # make sure environment variables exist
+    g.check_environ_variables()
+
     webapp = False 
     # orbit directories
     ann = g.make_nav_dirs(year)

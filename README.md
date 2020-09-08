@@ -52,7 +52,7 @@ If you are using the version from gitHub:
 
 If you use the PyPi version, I think it installs everything for you??? (right now it is on test.pypi.org)
 
-# Non-python in the code
+# Non-Python 
 
 All executables should be stored in the EXE directory.  If you do not define EXE, it will look for them in your 
 local working directory.  The Fortran translators are much faster than using python. But if you don't want to use them,
@@ -121,9 +121,23 @@ orbit file options:
 - nav : GPS broadcast, perfectly adequate for reflectometry
 - igs : IGS precise, GPS only
 - igr : IGS rapid, GPS only
-- jax : JAXA, GPS + great for getting Glonass within a few days
+- jax : JAXA, GPS + Glonass, within a few days
 - gbm : GFZ Potsdam, multi-GNSS, not rapid
 - grg: French group, GPS, Galileo and Glonass, not rapid
-- sha : Shanghao, multi-GNSS, not rapid
 - wum : Wuhan, multi-GNSS, not rapid
 
+# QuickLook 
+
+Before using the **gnssir** code, I recommend you try **quickLook**. This allows you
+to quickly test various options (elevation angles, frequencies, azimuths).
+The required inputs are station name, year, doy of year, and SNR Format (start with 99).
+
+If the SNR file has not been previously stored, you can provide a properly named RINEX file
+(lowercase only) in your working directory. If it doesn't find a file in either of these places, it
+will try to pick up the RINEX data from various archives and translate it for
+you into the correct SNR format. There are stored defaults for analyzing the
+spectral characteristics of the SNR data.  If you want to override those, use quickLook -h
+
+
+- quickLook.py gls1 2011 271 99  (this uses defaults, which are usually ok for the cryosphere)
+- quickLook.py rec1 2008 271 99  (this is an example where the system fails to find this file)
