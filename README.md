@@ -1,6 +1,5 @@
 # gnssrefl0
-This package is a new version of my GNSS-IR reflectometry code.
-** Do not use this until I get a chance to confirm that it installs properly. **
+This package is a new version of my GNSS-IR reflectometry code. **Do not use this until I get a chance to confirm that it installs properly.**
 
 The main difference bewteen this version and previous versions is that I am
 attempting to use proper python packaging rules, LOL. I have separated out the main
@@ -17,8 +16,6 @@ reflectometry parameters using geodetic data. This method is often
 called GNSS-IR, or GNSS Interferometric Reflectometry. There are three main codes:
 
 
-Upon installation, there are currently three main scripts:
-
 * **rinex2snr** translates RINEX files into SNR files needed for analysis.
 
 * **gnssir** computes reflector heights (RH) from GNSS data.
@@ -26,16 +23,19 @@ Upon installation, there are currently three main scripts:
 * **quickLook** gives you a quick (visual) assessment of a file without dealing
 with the details associated with **gnssir**.
 
+There is also a RINEX download script **download_rinex**, but it is not required.
+
 # Things You Should Know
 
 You should define three environment variables:
 
 * EXE = where various RINEX executables will live.
 
-* ORBITS = where the GPS/GNSS orbits will be stored
+* ORBITS = where the GPS/GNSS orbits will be stored. They will be listed under directories by 
+year and sp3 or nav depending on the orbit format.
 
 * REFL_CODE = where the reflection code inputs (SNR files and instructions) and outputs (RH)
-will be stored (see below)
+will be stored (see below). Both SNR files and results will be saved here in year subdirectories.
 
 However, if you do not do this, the code will assume your local working directory (where you installed
 the code) is where you want everything to be.
@@ -59,13 +59,13 @@ local working directory.  The Fortran translators are much faster than using pyt
 they are optional, that's fine. FYI, the python version is slow not because of the RINEX - it is because you need to calculate
 a crude model for satellite coordinates in this code. And that takes cpu time....
 
-* Required translator CRX2RNX, http://terras.gsi.go.jp/ja/crx2rnx.html
+* Required translator for compressed RINEX files. CRX2RNX, http://terras.gsi.go.jp/ja/crx2rnx.html
 
 * Optional Fortran RINEX Translator for GPS, the executable must be called gpsSNR.e, https://github.com/kristinemlarson/gpsonlySNR
 
 * Optional Fortran RINEX translator for multi-GNSS, the executable must be called gnssSNR.e, https://github.com/kristinemlarson/gnssSNR
 
-* Optional datatool, teqc is but highly recommended.  There is a list of static executables at the
+* Optional datatool, teqc, is highly recommended.  There is a list of static executables at the
 bottom of [this page](http://www.unavco.org/software/data-processing/teqc/teqc.html)
 
 * Optional datatool, gfzrnx is required if you plan to use the RINEX 3 option. Executables available from the GFZ,
@@ -122,8 +122,8 @@ orbit file options:
 - igs : IGS precise, GPS only
 - igr : IGS rapid, GPS only
 - jax : JAXA, GPS + great for getting Glonass within a few days
-- gbm : GFZ Potsdam, multi-GNSS
-- grg: French group, GPS, Galileo and Gloanss  
-- sha : Shanghao, all constellations, but not rapid
-- wum : Wuhan, , all constellations, but not rapid
+- gbm : GFZ Potsdam, multi-GNSS, not rapid
+- grg: French group, GPS, Galileo and Glonass, not rapid
+- sha : Shanghao, multi-GNSS, not rapid
+- wum : Wuhan, multi-GNSS, not rapid
 

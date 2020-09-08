@@ -932,7 +932,8 @@ def getsp3file_mgex(year,month,day,pCtr):
     if pCtr == 'grg': # french group
         file2 = 'GRG0MGXFIN_' + cyyyy + cdoy + '0000_01D_15M_ORB.SP3.gz'
     if pCtr == 'sha': # shanghai observatory
-        file2 = 'SHA0MGXRAP_' + cyyyy + cdoy + '0000_01D_05M_ORB.SP3.gz'
+        # change to 15 min 2020sep08
+        file2 = 'SHA0MGXRAP_' + cyyyy + cdoy + '0000_01D_15M_ORB.SP3.gz'
     # try out JAXA - should have GPS and glonass
     if pCtr == 'jax':
         file2 = 'JAX0MGXFIN_' + cyyyy + cdoy + '0000_01D_05M_ORB.SP3.gz'
